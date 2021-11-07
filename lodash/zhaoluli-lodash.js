@@ -526,8 +526,8 @@ var zhaoluli = function () {
       }, 0)
     }
 
-    function sumBy(array, predicate) {
-      predicate = iteratee(predicate)
+    function sumBy(array) {
+      let predicate = iteratee(predicate)
       for (let i = 0; i < array.length; i++) {
         s += predicate(array[i])
       }

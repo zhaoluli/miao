@@ -471,7 +471,7 @@ var zhaoluli = function () {
         return matchesProperty(...predicate)
       }
       if (typeof predicate == 'object') {
-        return matches(...predicate)
+        return matches(predicate)
       }
     }
 

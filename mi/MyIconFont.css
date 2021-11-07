@@ -1,0 +1,84 @@
+
+@font-face {
+font-family: MyIconFont;
+src: url(./xiaomi-icon.woff);
+}
+/* span {
+font-family: MyIconFont;
+font-size: 30px;
+font-style: normal;
+font-weight: normal;
+}
+.icon::before {
+content: '\E634';
+} */
+.icon-1 {
+font-family: MyIconFont;
+font-size: 48px;
+line-height: 48px;
+font-style: normal;
+font-weight: normal;
+}
+
+.icon-1::after {
+content: '\E615';
+}
+
+.icon-2 {
+font-family: MyIconFont;
+font-size: 30px;
+line-height: 20px;
+font-style: normal;
+font-weight: normal;
+}
+.icon-2::after {
+content: "\E601";
+}
+
+.icon-3 {
+font-family: MyIconFont;
+font-style: normal;
+font-weight: normal;
+} 
+.icon-3::before {
+content: '\E634';
+font-size: 25px;
+}
+.icon-4 {
+font-family: MyIconFont;
+font-style: normal;
+font-weight: normal;
+} 
+.icon-4::before {
+content: '\E635';
+font-size: 25px;
+}
+.icon-5 {
+font-family: MyIconFont;
+font-style: normal;
+font-weight: normal;
+} 
+.icon-5::before {
+content: '\E636';
+font-size: 25px;
+}
+    
+.icon-6 {
+  font-family: MyIconFont;
+  font-style: normal;
+  font-weight: normal;
+} 
+.icon-6::before {
+  content: '\E638';
+  font-size: 25px;
+}
+.icon-7 {
+  font-family: MyIconFont;
+  font-style: normal;
+  font-weight: normal;
+} 
+.icon-7::before {
+  content: '\E637';
+  font-size: 25px;
+  line-height: 30px;
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    input[type='text'], textarea {
+      width: 600px;
+      font-family: consolas;
+      font-size: 16px;
+    }
+    .container > div {
+      width: 800px;
+      margin: auto;
+    }
+    label, input[type='checkbox'] {
+      cursor: pointer;
+    }
+    #result {
+      white-space: pre-wrap;
+      font-family: consolas;
+      font-size: 16px;
+      top: 0;
+      position: absolute;
+      padding: 3px;
+      width: 600px;
+      color: transparent;
+      height: 300px;
+      line-height: 1.3;
+      overflow-y: scroll;
+      border: 2px solid;
+      box-sizing: border-box;
+    }
+    em {
+      background-color: #9fcfff;
+      font-style: normal;
+    }
+    em:nth-child(2n + 1) {
+      background-color: #d5ebff;
+        }
+    em:empty {
+      border-right: 1px dotted red;
+      margin-right: -1px;
+      background-color: transparent;
+    }
+    section {
+      position: relative;
+      width: 606px;
+      overflow: hidden;
+      line-height: 18px;
+    }
+    textarea {
+      display: block;
+      position: relative;
+      z-index: 10;
+      background-color: transparent; 
+      height: 300px;
+      line-height: 1.3;
+      overflow-y: scroll;
+      padding: 3px;
+      border: 2px solid;
+      box-sizing: border-box;
+    }
+    main {
+      width: 600px;
+      margin: auto;
+    }
+    p {
+      height: 16px;
+      color: red;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <main>
+        <span>请输入你的正则表达式：</span> 
+        <!-- 正则相关匹配 -->
+        <!-- onclick后运行run函数 -->
+        <label><input type="checkbox" id="ignoreCase" onclick="run()">i</label>
+        <label><input type="checkbox" checked id="global" onclick="run()">g</label>
+        <label><input type="checkbox" id="multiline" onclick="run()">m</label>
+        <br>
+        <input id="reg" type="text" value="fo." onkeyup="run()"><br>
+        <p id="regError"></p>
+        <!-- onkeyup为文本框输入时 -->
+        <span>请输入内容：</span> <br>
+        <section>
+          <!-- onsrcoll用于捕获滚动条滚动的像素 -->
+          <textarea onscroll="setScroll()" id="strInput" cols="30" rows="10" onkeyup="run()">foobr foafoofofjfkagfjioaf foofroofhfoo</textarea>
+          <div id="result">
+      
+          </div>
+        </section>
+      </main>
+    </div>
+
+  </div>
+  <script>
+    function setScroll() {
+      let scrollTop = strInput.scrollTop
+      result.style.top = -strInput.scrollTop + 'px'
+    }
+    //在文本框输入字符时通过下面函数读出
+    function run() {
+      console.time('run')
+      let regSource = reg.value // 将id = 'reg'的文本框内容取出
+      let flags = getFlags() //获取到flags相应字符，传入正则表达式
+      if (regSource == '') { //处理正则表达式输入为空
+        result.innerHTML = ''
+        regError.innerHTML = 'please input any regular'
+        return
+      }
+      try {//捕捉正则表达式错误
+        var re = new RegExp(regSource, flags) // 构建正则表达式
+        regError.innerHTML = ''// 无错时p标签处清空
+      } catch(e) { 
+        regError.innerHTML = e.message //出错时，将错误显示在页面p标签处
+         result.innerHTML = ''//捕捉到错误后将内容清空
+         return 
+      }
+      let str = strInput.value //textarae里面的值
+      let match
+      if (re.global) {
+        let resultHtml = ''
+        let lastIndex = re.lastIndex //记录每次匹配到相应字符的后面一位的索引
+        while (match = re.exec(str)) {
+          console.log(match)
+          resultHtml += str.slice(lastIndex, match.index) //正则匹配到相应字符后取出之前的所有字符
+          resultHtml += '<em>' + match[0] + '</em>' //将匹配的字符拼接上去
+          lastIndex = re.lastIndex // 没循环一次结束后需要更新index
+          if (match[0] == '') { // 当正则输入为空时避免死循环
+            re.lastIndex++
+          }
+        }
+        resultHtml += str.slice(lastIndex) //循环结束后剩余未匹配的字符也需要拼接上
+        result.innerHTML = resultHtml //将拼接完成的字符插入到页面中（class为result的div中）
+      } else {
+        match = re.exec(str)
+        let resultHtml = ''
+        let lastIndex = re.lastIndex
+        resultHtml += str.slice(lastIndex, match.index)
+        resultHtml += '<em>' + match[0] + '</em>'
+        resultHtml += str.slice(match.index + match[0].length) // 匹配开始的位置 + 匹配到相应字符的长度
+        result.innerHTML = resultHtml
+      }
+      console.timeEnd('run')
+    }
+
+    run()
+    //checked被勾选时，获取相应的字符
+    function getFlags() {
+      var flags = ''
+      if (ignoreCase.checked) {
+         flags += 'i'
+      }
+      if (global.checked) { 
+         flags += 'g'
+      }
+      if (multiline.checked) {
+         flags += 'm'
+      }
+      return flags
+    }
+
+    
+  </script>
+</body>
+</html>

@@ -550,6 +550,24 @@ var zhaoluli = function () {
        }
 
 
+    function split(str, separator, limit = Infinity) {
+      let result = []
+      let startIdx = 0 
+      str = str.slice(0,limit + 1)
+      if (typeof separator == 'string') {
+        let index = str.indexOf(separator, startIdx) //取出第一次匹配的的下标
+        while (index >= 0 ) { //下标还存在时
+          result.push(str.slice(startIdx, index)) //将匹配下标之前的字符串push
+          startIdx = index + separator.length // 每次push后更新起始下标
+          index =  str.indexOf(separator, startIdx)//更新下一次匹配到的下标
+        }
+      }
+      result.push(str.slice(startIdx)) // 将末尾的字符串匹配上去
+      return result
+    }
+
+    
+
   
 
 
@@ -617,5 +635,6 @@ var zhaoluli = function () {
     sumBy: sumBy,
     isEqual: isEqual,
     unionBy: unionBy,
+    split: split,
   }
 }()

@@ -566,6 +566,110 @@ var zhaoluli = function () {
       return result
     }
 
+    function parseJson(input) {
+      let str = input
+  
+      let i = 0
+      function parseValue() {
+        let c = str[i]
+        if (c == '[') {
+          return parseArray()
+        }
+        if (c == '{') {
+          return parseObject()
+        }
+        if (c == '"') {
+          return parseString()
+        }
+        if (c == 't') {
+          return parseTrue()
+        }
+        if (c == 'f') {
+          return parseFalse()
+        }
+        if (c == 'n') {
+          return parseNull()
+        }
+        return parseNumber()
+      }
+      function parseTrue() {
+        i += 4
+        return true
+      }
+      
+      function parseFalse() {
+        i += 5
+        return true
+      }
+      
+      function parseNull() {
+        i += 4
+        return null
+      }
+      //字符串解析
+      function parseString() {
+        i++ //跳过当前双引号
+        let strs = ''
+        while (str[i] !== '"') {
+          strs += str[i++]
+        }
+        i++ //跳过最后一个双引号
+        return strs
+      }
+      //从i指向的位置解析出一个数值，此时i已经指向数值第一位
+      function parseNumber() {
+        let numStr = ''
+        while (str[i] >= '0' && str[i] <= '9') {
+          numStr += str[i++]
+        }
+        return +numStr
+      }
+      //此时i指向数组'['，解析出一个数组，移动i到数组最后，返回数组
+      function parseArray() {
+        i++
+        let strAry = []
+        if (str[i] == ']') {//数组为空时
+          i++
+          return strAry
+        }
+        while (true) {
+          let val = parseValue()//递归判断数组里面的值
+          strAry.push(val)
+          if (str[i] == ']') {
+            i++
+            return strAry
+          }else if (str[i] == ',') {
+            i++
+          }
+        }
+      }
+      
+      function parseObject() {
+        i++
+        let strObj = {}
+        if (str[i] == '}') {
+          i++
+          return strObj
+        }
+        while (true) {
+          let key = parseString()//对象的key肯定为字符串
+          i++ //跳过冒号
+          let val = parseValue()//对象的只有多种情况，使用递归解析
+          strObj[key] = val
+          if (str[i] == '}') {
+            i++
+            return strObj
+          } else if (str[i] == ',') {
+            i++
+          }
+        }
+       }
+       return parseValue()
+    }
+  
+
+
+
     
 
   
@@ -636,5 +740,6 @@ var zhaoluli = function () {
     isEqual: isEqual,
     unionBy: unionBy,
     split: split,
+    parseJson: parseJson,
   }
 }()

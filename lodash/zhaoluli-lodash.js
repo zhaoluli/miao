@@ -517,13 +517,17 @@ var zhaoluli = function () {
   }
 
     function filter(collection, predicate) {
-
       predicate = iteratee(predicate)
-
       let result = []
-      for (let key in collection) {
-        if (predicate(collection[key], +key, collection) === true) {
-          result.push(collection[key])
+      if (Array.isArray(collection)) {
+        for (var i = 0; i < collection.length; i++) {
+          if (predicate(collection[i], i, collection) == true)
+            result.push(collection[i])
+        }
+      } else if (typeof collection == 'object') {
+        for (var key in collection) {
+          if (predicate(collection[key], key, collection) == true)
+            result.predicate(collection[key])
         }
       }
       return result

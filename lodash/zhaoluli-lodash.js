@@ -495,7 +495,10 @@ var zhaoluli = function () {
     if (typeof param == 'object') {
      return param = matches(param)
     }
-    return param
+    if (typeof param == 'function') {
+
+      return param
+    }
   }
 
   function map(collection, predicate) {

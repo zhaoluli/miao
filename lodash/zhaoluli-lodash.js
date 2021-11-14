@@ -391,47 +391,63 @@ var zhaoluli = function () {
     }
 
 
-    function get(object, path, defaultVal) {
-      path = toPath(path)
-
-      for (let i = 0; i < path.length; i++) {
-        if (object == undefined) {
-          return defaultVal
-        } else {
-          object = object[path[i]]
-        }
-      }
-      return object
-    }
-
-    function toPath(val) {
-      if (Array.isArray(val)) {
-        return val
+  //传入参数获取深层属性值
+  function get(object, path, defaultVal = undefined) {
+    path = toPath(path)// 当path为字符串是调用topath函数将其转化为数组
+    for (let i of path) {//遍历数组
+      if (object == undefined) {//object读取数组为undefined返回默认值
+        return defaultVal
       } else {
-        return val.split('][')
-          .reduce((result, item) => {
-          return result.concat(item.split('['))
-      },[]).reduce((result, item) => {
-          return result.concat(item.split('].'))
-      },[]).reduce((result, item) => {
-          return result.concat(item.split('.'))
-      },[])
+        object = object[i] //object读取
       }
     }
+    return object
+  }
+
+    // function toPath(val) {
+    //   if (Array.isArray(val)) {
+    //     return val
+    //   } else {
+    //     return val.split('][')
+    //       .reduce((result, item) => {
+    //       return result.concat(item.split('['))
+    //   },[]).reduce((result, item) => {
+    //       return result.concat(item.split('].'))
+    //   },[]).reduce((result, item) => {
+    //       return result.concat(item.split('.'))
+    //   },[])
+    //   }
+    // }
+
+      //将字符串转化为数组
+  function toPath(val) {
+    if (Array.isArray(val)) {
+      return val
+    } else {
+      return val.replace(/\[|(\]\.)|\.|(\]\[)|(\]\.|\])/g, ',').split(',')
+    }
+  }
+
+    //返回一个函数输出接受的属性字符串的属性值
+    function property(prop) {
+      return function (obj) {
+        return get(obj, prop) //调用get函数获取深层次属性
+      }
+    }
+  
 
     
-    function property(path) {
-      return function (object) {
-        return get(object, path)
+  //返回一个函数判断接受的对象是否匹配另一个对象
+  function matches(obj) {
+    return function(srcObj) {
+      for (let key in obj) {
+        if (obj[key] !== srcObj[key]) {
+          return false
+        }
       }
+      return true
     }
-
-    function matches(src) {
-      // return bind(isMatch, null, window, src)
-      return function(obj) {
-        return isMatch(obj, src)
-      }
-    }
+  }
 
 
     // function matches(obj) {
@@ -453,37 +469,43 @@ var zhaoluli = function () {
     //   }
     // }
 
-    function matchesProperty(path, val) {
-      return function(obj) {
-        return isEqual(get(obj, path), val)
+  //返回一个函数判断接受的数组是否配接收的对对对象
+  function matchesProperty(ary) {
+    let temp = ary[0]
+    let temp1 = ary[1]
+    return function(obj) {
+      if (obj[temp] == temp1) {
+        return true
       }
     }
+    return false
+  }
 
 
-    function iteratee(predicate) {
-      if (typeof predicate == 'function') {
-        return predicate
-      }
-      if (typeof predicate == 'string') {
-        return property(predicate)
-      }
-      if (Array.isArray(predicate)) {
-        return matchesProperty(...predicate)
-      }
-      if (typeof predicate == 'object') {
-        return matches(predicate)
-      }
+
+    //创建interatee函数将上面三种情况汇总
+  function iteratee(param) {
+    if (typeof param == 'string') {
+     return param = property(param)
+    }
+    if (Array.isArray(param)) {
+      return matchesProperty(...param)
     }
 
-    function map(collection, mapper) {
-      mapper = iteratee(mapper)
-
-      let result = []
-      for (let key in collection) {
-        result.push(mapper(collection[key], +key, collection))
-      }
-      return result
+    if (typeof param == 'object') {
+     return param = matches(param)
     }
+    return param
+  }
+
+  function map(collection, predicate) {
+    let mapper = iteratee(predicate)
+    let result = []
+    for (let key in collection) {
+      result.push(mapper(collection[key], key, collection))
+    }
+    return result
+  }
 
     function filter(collection, predicate) {
 
@@ -666,6 +688,32 @@ var zhaoluli = function () {
        }
        return parseValue()
     }
+
+
+    function groupBy(array, predicate = it => it) {
+      let result = {}
+      for (let i = 0; i < array.length; i++) {
+        let key = predicate(array[i], i, array)//将数组的相关属性传给predicate函数
+        if (!Array.isArray(result[key])) {
+          result[key] = []
+        }
+        result[key].push(array[i])
+      }
+      return result
+    }
+
+    function identity(value) {
+      return value
+    }
+
+    function mapValues(obj, mapper) {
+      let result = {}
+      for (let key in obj) {
+        let val = obj[key]
+        result[key] = mapper(val, key, obj)
+      }
+      return result
+    }
   
 
 
@@ -741,5 +789,6 @@ var zhaoluli = function () {
     unionBy: unionBy,
     split: split,
     parseJson: parseJson,
+    identity: identity,
   }
 }()

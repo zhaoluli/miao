@@ -489,7 +489,7 @@ var zhaoluli = function () {
      return param = property(param)
     }
     if (Array.isArray(param)) {
-      return matchesProperty(...param)
+      return matchesProperty(param)
     }
 
     if (typeof param == 'object') {

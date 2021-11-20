@@ -326,6 +326,16 @@ var zhaoluli = function () {
       return result
     }
 
+    function uniqWith(ary, predicate) {
+      let result = []
+      for (let i = 0; i < ary.length; i++) {
+        if (!result.some(item => predicate(item, ary[i]))) {
+          result.push(ary[i])
+        }
+      }
+      return result
+    }
+
     function unzip(array) {
       let result = []
       let count = array[0].length
@@ -802,5 +812,6 @@ var zhaoluli = function () {
     split: split,
     parseJson: parseJson,
     identity: identity,
+    uniqWith: uniqWith,
   }
 }()

@@ -312,6 +312,20 @@ var zhaoluli = function () {
       return Array.from(new Set(array))
     }
 
+    function uniqBy(ary, predicate = identity) {
+      predicate = iteratee(predicate)
+      let result = []
+      let seen = []
+      for (let i = 0; i < ary.length; i++) {
+        let temp = predicate(ary[i])
+        if (!seen.includes(temp)) {
+          result.push(ary[i])
+          seen.push(temp)
+        }
+      }
+      return result
+    }
+
     function unzip(array) {
       let result = []
       let count = array[0].length
@@ -561,28 +575,13 @@ var zhaoluli = function () {
       }, 0)
     }
 
-    function sumBy(array) {
-      let predicate = iteratee(predicate)
-      for (let i = 0; i < array.length; i++) {
-        s += predicate(array[i])
-      }
-      return s
-    }
-
-    function unionBy(...array) {
-      let predicate = array.pop()
+    function sumBy(ary, predicate) {
       predicate = iteratee(predicate)
-      let result = []
-      let seen = new Set()
-      for (let i = 0; i < array.length; i++) {
-        let computed = predicate(array[i], i, array) 
-          if (!seen.has(computed)) {
-            result.push(array[i])
-            seen.add(array[i])
-          }
-        }
-        return result
-       }
+      return ary.reduce((total, cur) => {
+        return predicate(cur) + total
+      }, 0)
+    }
+    
 
 
     function split(str, separator, limit = Infinity) {
@@ -799,7 +798,7 @@ var zhaoluli = function () {
     sum: sum,
     sumBy: sumBy,
     isEqual: isEqual,
-    unionBy: unionBy,
+    uniqBy: uniqBy,
     split: split,
     parseJson: parseJson,
     identity: identity,

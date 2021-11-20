@@ -736,6 +736,33 @@ var zhaoluli = function () {
       }
       return result
     }
+
+    function includes(collection, value, fromIndex = 0) {
+      if (typeof collection == 'string') {
+        if (collection.indexOf(value, fromIndex) !== -1) {
+          return true
+        }else {
+          return false
+        }
+      }
+
+      if (Array.isArray(collection)) {
+        if (collection.indexOf(value, fromIndex) !== -1) {
+          return true
+        }else {
+          return false
+        }
+      }
+
+      if (typeof collection == 'object') {
+        for (let key in collection) {
+          if (collection[key] == value) {
+            return true
+          }
+        }
+        return false
+      }
+    }
   
 
 
@@ -813,5 +840,6 @@ var zhaoluli = function () {
     parseJson: parseJson,
     identity: identity,
     uniqWith: uniqWith,
+    includes: includes,
   }
 }()

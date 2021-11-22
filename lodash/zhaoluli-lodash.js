@@ -712,7 +712,8 @@ var zhaoluli = function () {
     }
 
 
-    function groupBy(array, predicate = it => it) {
+    function groupBy(array, predicate = identity) {
+      predicate = iteratee(predicate)
       let result = {}
       for (let i = 0; i < array.length; i++) {
         let key = predicate(array[i], i, array)//将数组的相关属性传给predicate函数
@@ -763,6 +764,25 @@ var zhaoluli = function () {
         return false
       }
     }
+
+    function differenceBy(array, ...values) {//此处传入的参数values中最后一项为第三个参数
+      let predicate = values[values.length - 1]  //检查第三个参数
+      if (Array.isArray(predicate)) {
+        return difference(array, ...values)
+      } else {
+        values.pop() //不是数组时将第三个参数取出
+        predicate = iteratee(predicate)
+        let temp = flattenDeep(values)
+        let newArray = temp.map(item => predicate(item))
+        let result = []
+        array.forEach(item => {
+          if (!newArray.includes(predicate(item))) {
+            result.push(item)
+          }
+        })
+        return result
+      }
+    } 
   
 
 
@@ -841,5 +861,7 @@ var zhaoluli = function () {
     identity: identity,
     uniqWith: uniqWith,
     includes: includes,
+    groupBy: groupBy,
+    differenceBy: differenceBy,
   }
 }()

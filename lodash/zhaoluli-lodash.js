@@ -812,16 +812,15 @@ var zhaoluli = function () {
     function dropRightWhile(array, predicate = identity) {
       predicate = iteratee(predicate)
       let result = []
+      let count = false
       array.forEach(item => {
-        let flag = false
+        
         if (!predicate(item)) {
-          flag = true
-        }
-        if (flag) {
-          result.push(item)
+          count = i
+          break
         }
       })
-      return result
+      return array.slice(0, count + 1)
     }
 
     function dropWhile(array, predicate = identity) {

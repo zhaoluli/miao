@@ -825,7 +825,7 @@ var zhaoluli = function () {
     function dropWhile(array, predicate = identity) {
       predicate = iteratee(predicate)
       let count = 0
-      for (let i = 0 ; i < array.length; i++) {
+      for (let i = array.length - 1 ; i >= 0; i--) {
         if (!predicate(array[i], i, array)) {
           count = i
           break

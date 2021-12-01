@@ -853,6 +853,31 @@ var zhaoluli = function () {
       }
       return -1
     }
+
+    function intersectionBy(array, ...values) {
+      let predicate = values[values.length - 1]
+      let result = []
+      if (Array.isArray(predicate)) {
+        let newArray = [].concat(...values)
+        newArray.forEach(item => {
+          if (array.includes(item)) {
+            result.push(item)
+          }
+        })
+        return result
+      } else {
+        predicate = values.pop()
+        predicate = _.iteratee(predicate)
+        let newArray = [].concat(...values)
+        let a = newArray.map(item => predicate(item))
+        array.forEach(item => {
+          if (a.includes(predicate(item))) {
+            result.push(item)
+          }
+        })
+        return result
+      }
+    } 
     
   
 
@@ -939,5 +964,6 @@ var zhaoluli = function () {
     dropWhile: dropWhile,
     findIndex: findIndex,
     findLastIndex: findLastIndex,
+    intersectionBy: intersectionBy,
   }
 }()

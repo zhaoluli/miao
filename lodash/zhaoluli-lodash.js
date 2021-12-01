@@ -808,6 +808,33 @@ var zhaoluli = function () {
       return result
 
     }
+
+    function dropRightWhile(array, predicate = identity) {
+      predicate = iteratee(predicate)
+      let result = []
+      array.forEach(item => {
+        let flag = false
+        if (!predicate(item)) {
+          flag = true
+        }
+        if (flag) {
+          result.push(item)
+        }
+      })
+      return result
+    }
+
+    function dropWhile(array, predicate = identity) {
+      predicate = iteratee(predicate)
+      let count = 0
+      for (let i = 0 ; i < array.length; i++) {
+        if (!predicate(array[i], i, array)) {
+          count = i
+          break
+        }
+      }
+      return array.slice(count)
+    }
   
 
 
@@ -889,5 +916,7 @@ var zhaoluli = function () {
     groupBy: groupBy,
     differenceBy: differenceBy,
     differenceWith: differenceWith,
+    dropRightWhile: dropRightWhile,
+    dropWhile: dropWhile,
   }
 }()

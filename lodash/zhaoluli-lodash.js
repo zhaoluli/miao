@@ -784,6 +784,30 @@ var zhaoluli = function () {
         return result
       }
     } 
+
+    function differenceWith(array, ...value) {
+      let predicate = value[value.length - 1]
+      let result = []
+      if (typeof predicate == 'function') {
+        let predicate = value.pop()
+        let values = [].concat(...value)
+        for (let key of array) {
+          let flag = false
+          for (let item of values) {
+            if (!predicate(key, item)) {
+              flag = true
+              break
+            }
+          }
+          if (flag) {
+            result.push(key)
+            break
+          }
+        }
+      }
+      return result
+
+    }
   
 
 
@@ -864,5 +888,6 @@ var zhaoluli = function () {
     includes: includes,
     groupBy: groupBy,
     differenceBy: differenceBy,
+    differenceWith: differenceWith,
   }
 }()

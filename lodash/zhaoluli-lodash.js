@@ -812,14 +812,13 @@ var zhaoluli = function () {
     function dropRightWhile(array, predicate = identity) {
       predicate = iteratee(predicate)
       let result = []
-      let count = false
-      array.forEach(item => {
-        
-        if (!predicate(item)) {
+      let count = 0
+      for (let i = 0; i < array.length; i++) {
+        if (!predicate(array[i], i, array)) {
           count = i
           break
         }
-      })
+      }
       return array.slice(0, count + 1)
     }
 

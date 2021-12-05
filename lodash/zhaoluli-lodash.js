@@ -923,6 +923,19 @@ var zhaoluli = function () {
     }
 
 
+    function pullAllBy(array, values, predicate = identity) {
+      predicate = _.iteratee(predicate)
+      let result = []
+      let newValues = values.map(item => predicate(item))
+      for (let val of array) {
+        if (!newValues.includes(predicate(val))) {
+          result.push(val)
+        }
+      }
+      return result
+    }
+
+
     
   
 
@@ -1013,5 +1026,6 @@ var zhaoluli = function () {
     intersectionWith: intersectionWith,
     nth: nth,
     pullAll: pullAll,
+    pullAllBy: pullAllBy,
   }
 }()

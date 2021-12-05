@@ -878,6 +878,41 @@ var zhaoluli = function () {
         return result
       }
     } 
+
+    function intersectionWith(...array) {
+      let predicate = array[array.length - 1]
+      let array1 = array[0]
+      let array2 = array[1]
+      let result = []
+      let j = 0
+      for (let i = 0; i < array1.length; i++) {
+        let temp1 = array1[i]
+        for (let j = 0; j < array2.length; j++) {
+          let temp2 = array2[j]
+          if (predicate(temp1, temp2)) {
+            result.push(temp1)
+          }
+        }
+      return result
+      }
+    }
+
+    function nth(array, n = 0) {
+      if (n < 0) {
+        let a = -n
+        for (let i = array.length - 1; i >= 0; i--) {
+          if (a == i) {
+            return array[a]
+          }
+        }
+      } else {
+        for (let i of array) {
+          return array[n]
+        }
+      }
+    }
+
+
     
   
 
@@ -965,5 +1000,7 @@ var zhaoluli = function () {
     findIndex: findIndex,
     findLastIndex: findLastIndex,
     intersectionBy: intersectionBy,
+    intersectionWith: intersectionWith,
+    nth: nth,
   }
 }()

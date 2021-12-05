@@ -912,6 +912,16 @@ var zhaoluli = function () {
       }
     }
 
+    function pullAll(array, values) {
+      let result = []
+      for (let val of array) {
+        if (!values.includes(val)) {
+          result.push(val)
+        }
+      }
+      return result
+    }
+
 
     
   
@@ -1002,5 +1012,6 @@ var zhaoluli = function () {
     intersectionBy: intersectionBy,
     intersectionWith: intersectionWith,
     nth: nth,
+    pullAll: pullAll,
   }
 }()

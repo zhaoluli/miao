@@ -935,6 +935,12 @@ var zhaoluli = function () {
       return result
     }
 
+    function pullAllWith(array, values, comparator) {
+      comparator = iteratee(comparator)
+
+      return array.filter(item => !values.every(it =>(comparator(it, item))))
+    }
+
 
     
   
@@ -1027,5 +1033,6 @@ var zhaoluli = function () {
     nth: nth,
     pullAll: pullAll,
     pullAllBy: pullAllBy,
+    pullAllWith: pullAllWith,
   }
 }()

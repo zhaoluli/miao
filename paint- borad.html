@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  svg {
+    border: 1px solid;
+    display: block;
+    margin-top: 10px;
+  }
+</style>
+<body>
+  颜色：<input type="color" name="" id="colour">
+  线条粗细：<input type="range" name="" id="thickness" min="1" max="6" value="2">
+  <span>2</span>
+  撤销：<button>clear</button>
+  <button onclick="tool = 'circle'">○</button>
+  <button onclick="tool = 'line'">✎</button>
+  <button onclick="save()">保存</button>
+  <button onclick="openFile()">打开</button>
+  <input type="file" name="" id="fileOpen" hidden accept=".svg">
+  <div id="container">
+    <svg style="height: 600px; width: 600px" version="1.1" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> </svg>
+  </div>
+  <script>
+    let hassave = false
+    let tool = 'line'
+    let input = document.querySelector('#colour')
+    let range = document.querySelector('#thickness')
+    let svg = document.querySelector('svg')
+    let line
+    let lastmouse = null
+    container.addEventListener('mousedown', function(e) {
+      hassave = true
+      if (!svg.contains(e.target)) {
+        return
+      }
+      if (tool == 'line') {
+        let mousepos = mouse(svg)//拿到鼠标相对于svg的位置，用于绘制直线
+        let polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline')//鼠标按下创建svg折线
+        
+        let points = `${mousepos.x} ${mousepos.y} `//此为直线坐标，最后加空格用于拼接间隔
+        polyline.setAttribute('fill', 'none')
+        polyline.setAttribute('stroke', input.value)
+        polyline.setAttribute('stroke-width', range.value)
+        polyline.setAttribute('stroke-linecap', 'round')
+        polyline.setAttribute('stroke-linejoin', 'round')
+        svg.append(polyline)
+        polyline.setAttribute('points', points) //添加poyline坐标
+  
+  
+        function drawline(e) {
+          mousepos = mouse(svg)//拿到鼠标相对于svg的位置，用于绘制直线
+          // line = document.createElementNS('http://www.w3.org/2000/svg','line')
+          points += `${mousepos.x} ${mousepos.y} `
+          polyline.setAttribute('points', points)
+        //   if (lastmouse == null) {
+        //     line.setAttribute('x1', mousepos.x)
+        //     line.setAttribute('y1', mousepos.y)
+        //     line.setAttribute('x2', mousepos.x)
+        //     line.setAttribute('y2', mousepos.y)
+        //     line.setAttribute('stroke', input.value)
+        //     line.setAttribute('stroke-width', range.value)
+        //     svg.append(line)
+        //   } else {
+  
+        //     line.setAttribute('x1', mousepos.x)
+        //     line.setAttribute('y1', mousepos.y)
+        //     line.setAttribute('x2', lastmouse.x)
+        //     line.setAttribute('y2', lastmouse.y)
+        //     line.setAttribute('stroke', input.value)
+        //     line.setAttribute('stroke-width', range.value)
+        //     svg.append(line)
+        //   }
+        //   lastmouse = mousepos // 更新鼠标位置
+        }
+        container.addEventListener('mousemove',drawline) //mouse按下且移动时画线
+        container.addEventListener('mouseup', function once() {
+          lastmouse = null
+          container.removeEventListener('mouseup',once )
+          container.removeEventListener('mousemove',drawline )
+        })
+      }
+
+      if (tool == 'circle') {
+        let mousepos = mouse(svg)
+        let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        let startposx = mousepos.x
+        let startposy = mousepos.y
+        circle.setAttribute('fill', 'none')
+        circle.setAttribute('stroke', input.value)
+        circle.setAttribute('stroke-width', range.value)
+        function drawcircle(e) {
+          let mousepos = mouse(svg)//拿到鼠标相对于svg的位置，用于绘制直线
+          let lastposx = mousepos.x
+          let lastposy = mousepos.y
+
+          // circle.setAttribute('fill', 'none')
+          circle.setAttribute('cx',(lastposx + startposx) / 2 )
+          circle.setAttribute('cy',(lastposy + startposy) / 2 )
+          circle.setAttribute('r',Math.abs((lastposy - startposy)) / 2 )
+          svg.append(circle)
+        }
+        svg.addEventListener('mousemove',drawcircle) //mouse按下且移动时画线
+        svg.addEventListener('mouseup', function once() {
+          lastmouse = null
+          svg.removeEventListener('mouseup',once )
+          svg.removeEventListener('mousemove',drawcircle)
+        })
+      }
+    })
+
+    let btn = document.querySelector('button')
+    btn.addEventListener('click', function clearchild() {
+      let child = svg.lastElementChild
+      while(child) {
+        svg.removeChild(child)
+        child = svg.lastElementChild
+      }
+    })
+    
+    let span = document.querySelector('span')
+    range.addEventListener('input', function(e) {
+      console.log(2)
+      span.textContent = range.value
+    })
+
+
+
+
+    //鼠标在元素的位置
+    function mouse(node) {
+      let box = node.getBoundingClientRect() //元素相对于页面的位置
+      return {
+        x: window.event.clientX - box.x, //client鼠标相对于页面的位置哦
+        y: window.event.clientY - box.y
+      }
+    }
+
+    function save() {
+      hassave = false
+      let source = svg.outerHTML //取出svg里面的源代码
+      let blob = new Blob(['<?xml version="1.0" encoding="utf-8"?>', source], {type: 'image/xml+svg'})//数组中的内容拼接起来，并给出媒体类型
+      let url = URL.createObjectURL(blob) //创建链接
+      let anchor = document.createElement('a') //创建a标签，用于模拟点击
+      anchor.href = url
+      anchor.download = 'paint.svg'
+      anchor.click()
+    }
+
+    window.addEventListener('beforeunload', e => {
+      if (hassave) {
+        return e.returnValue = '还未保存'
+      }
+    })
+
+    function openFile() {
+      if (hassave) {
+        let print = confirm('还未保存,是否打开新文件')
+        if (print == false) {
+          return
+        }
+      }
+      fileOpen.click() 
+    }
+
+    fileOpen.addEventListener('change', function(e) {
+      let svgfile = fileOpen.files[0] //显示出你所选择文件的相关信息
+      let fr = new FileReader() //读取储存在计算机上的文件(创建文件读取器)
+      fr.addEventListener('load', () => { //该事件在读取完成时触发
+        let svgContent = fr.result //文件内容，该属性在读取完成后有效
+        container.innerHTML = svgContent
+        svg = container.querySelector('svg') //上一步操作将svg替换，所以重新获取
+      })
+      fr.readAsText(svgfile) //文件读取器读取文件
+    })
+
+
+
+  </script>
+</body>
+</html>
